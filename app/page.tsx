@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { SignInButton, SignUpButton, UserButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -102,6 +103,11 @@ export default function Home() {
             </SignedOut>
 
             <SignedIn>
+              <Link href="/dashboard">
+                <Button variant="ghost" className="text-slate-300 hover:text-white hover:bg-slate-700">
+                  Dashboard
+                </Button>
+              </Link>
               <UserButton afterSignOutUrl="/" />
             </SignedIn>
           </div>
