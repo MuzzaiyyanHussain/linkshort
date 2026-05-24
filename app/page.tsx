@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Copy, LinkIcon, Trash2, ExternalLink } from "lucide-react";
 import { toast, Toaster } from "sonner";
+import {FaGithub} from "react-icons/fa"
 
 interface ShortenedURL {
   id: string;
@@ -18,6 +19,7 @@ interface ShortenedURL {
   clicks: number;
   createdAt: Date;
 }
+
 
 export default function Home() {
   const [originalUrl, setOriginalUrl] = useState("");
@@ -68,7 +70,7 @@ export default function Home() {
       setOriginalUrl("");
 
       toast.success("URL shortened successfully!");
-    } catch (error) {
+    } catch {
       toast.error("Failed to shorten URL");
     } finally {
       setLoading(false);
@@ -106,6 +108,17 @@ export default function Home() {
             <Badge variant="secondary" className="text-xs">
               Free & Fast
             </Badge>
+
+            <Link href="https://github.com/MuzzaiyyanHussain/linkshort" target="_blank" rel="noopener noreferrer">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="text-slate-300 hover:text-white hover:bg-slate-700 transition-all duration-200 flex items-center gap-2"
+              >
+                <FaGithub className="w-5 h-5" />
+                <span className="hidden sm:inline text-xs">GitHub</span>
+              </Button>
+            </Link>
 
             <SignedOut>
               <div className="flex gap-2">
@@ -271,6 +284,13 @@ export default function Home() {
           )}
         </SignedIn>
       </main>
+
+      {/* Footer - Attribution */}
+      <footer className="border-t border-slate-700 bg-slate-900/50 backdrop-blur-sm mt-16">
+        <div className="max-w-4xl mx-auto px-4 py-6 text-center text-slate-400 text-sm">
+          Built with ❤️ by Muzzaiyyan Hussain
+        </div>
+      </footer>
     </div>
   );
 }

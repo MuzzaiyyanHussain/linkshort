@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,8 +26,9 @@ export default function DashboardClient({ initialUrls }: DashboardClientProps) {
   const [originalUrl, setOriginalUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [urls, setUrls] = useState<URL[]>(initialUrls);
+  const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
 
-  const handleCreateUrl = async () => {
+  const handleCreateUrl = useCallback(async () => {
     if (!originalUrl.trim()) {
       toast.error("Please enter a URL");
       return;
@@ -38,58 +39,67 @@ export default function DashboardClient({ initialUrls }: DashboardClientProps) {
 
       const response = await fetch("/api/shorten", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          url: originalUrl,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: originalUrl }),
       });
 
-      const result = await response.json();
-
-      console.log(result);
-
       if (!response.ok) {
+        const result = await response.json();
         toast.error(result.error || "Failed to shorten URL");
         return;
       }
 
+      const result = await response.json();
       setUrls((prev) => [result.data, ...prev]);
-
       toast.success("URL shortened successfully!");
-
       setOriginalUrl("");
     } catch (error) {
-      console.log(error);
-
+      console.error("Error creating URL:", error);
       toast.error("Failed to shorten URL");
     } finally {
       setLoading(false);
     }
-  };
+  }, [originalUrl]);
 
-  const copyToClipboard = (text: string) => {
+  const copyToClipboard = useCallback((text: string) => {
     navigator.clipboard.writeText(text);
     toast.success("Copied to clipboard!");
-  };
+  }, []);
 
-  const deleteUrl = async (id: string) => {
+  const deleteUrl = useCallback(async (id: string) => {
     try {
-      await fetch(`/api/url/${id}`, {
-        method: "DELETE",
-      });
+      setDeletingIds((prev) => new Set(prev).add(id));
 
-      setUrls(urls.filter((url) => url.id !== id));
+      const response = await fetch(`/api/url/${id}`, { method: "DELETE" });
+
+      if (!response.ok) {
+        toast.error("Failed to delete URL");
+        return;
+      }
+
+      setUrls((prev) => prev.filter((url) => url.id !== id));
       toast.success("URL deleted successfully!");
-    } catch (_error) {
+    } catch (error) {
+      console.error("Error deleting URL:", error);
       toast.error("Failed to delete URL");
+    } finally {
+      setDeletingIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(id);
+        return newSet;
+      });
     }
-  };
+  }, []);
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") handleCreateUrl();
-  };
+  const handleKeyPress = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" && !loading) handleCreateUrl();
+    },
+    [handleCreateUrl, loading]
+  );
+
+  const totalClicks = urls.reduce((sum, url) => sum + (url.clicks || 0), 0);
+  const avgClicks = urls.length > 0 ? Math.round(totalClicks / urls.length) : 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -214,7 +224,8 @@ export default function DashboardClient({ initialUrls }: DashboardClientProps) {
                             size="sm"
                             variant="ghost"
                             onClick={() => deleteUrl(url.id)}
-                            className="text-red-400 hover:text-red-300 hover:bg-red-950"
+                            disabled={deletingIds.has(url.id)}
+                            className="text-red-400 hover:text-red-300 hover:bg-red-950 disabled:opacity-50"
                             title="Delete link"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -241,7 +252,7 @@ export default function DashboardClient({ initialUrls }: DashboardClientProps) {
           </Card>
         )}
 
-        {/* Stats Section */}
+        {/* Stats Section - Memoized calculations */}
         {urls.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
             <Card className="bg-slate-800 border-slate-700 p-6">
@@ -250,15 +261,11 @@ export default function DashboardClient({ initialUrls }: DashboardClientProps) {
             </Card>
             <Card className="bg-slate-800 border-slate-700 p-6">
               <p className="text-slate-400 text-sm">Total Clicks</p>
-              <p className="text-3xl font-bold text-white mt-2">
-                {urls.reduce((sum, url) => sum + (url.clicks || 0), 0)}
-              </p>
+              <p className="text-3xl font-bold text-white mt-2">{totalClicks}</p>
             </Card>
             <Card className="bg-slate-800 border-slate-700 p-6">
               <p className="text-slate-400 text-sm">Avg Clicks/Link</p>
-              <p className="text-3xl font-bold text-white mt-2">
-                {Math.round(urls.reduce((sum, url) => sum + (url.clicks || 0), 0) / urls.length)}
-              </p>
+              <p className="text-3xl font-bold text-white mt-2">{avgClicks}</p>
             </Card>
           </div>
         )}

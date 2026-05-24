@@ -8,6 +8,9 @@ export const metadata = {
   description: "Manage your shortened URLs",
 };
 
+// Revalidate every 60 seconds for fresh data
+export const revalidate = 60;
+
 export default async function DashboardPage() {
   const { userId } = await auth();
 
@@ -15,11 +18,13 @@ export default async function DashboardPage() {
     redirect("/");
   }
 
+  // Only select needed columns for performance
   const { data: urls, error } = await supabase
     .from("urls")
-    .select("*")
+    .select("id, short_code, original_url, clicks, created_at")
     .eq("user_id", userId)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(100); // Limit to prevent loading too much data
 
   if (error) {
     console.error("Supabase error:", error);
