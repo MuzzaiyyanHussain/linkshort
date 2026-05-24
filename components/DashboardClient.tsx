@@ -28,46 +28,46 @@ export default function DashboardClient({ initialUrls }: DashboardClientProps) {
   const [urls, setUrls] = useState<URL[]>(initialUrls);
 
   const handleCreateUrl = async () => {
-  if (!originalUrl.trim()) {
-    toast.error("Please enter a URL");
-    return;
-  }
-
-  try {
-    setLoading(true);
-
-    const response = await fetch("/api/shorten", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        url: originalUrl,
-      }),
-    });
-
-    const result = await response.json();
-
-    console.log(result);
-
-    if (!response.ok) {
-      toast.error(result.error || "Failed to shorten URL");
+    if (!originalUrl.trim()) {
+      toast.error("Please enter a URL");
       return;
     }
 
-    setUrls((prev) => [result.data, ...prev]);
+    try {
+      setLoading(true);
 
-    toast.success("URL shortened successfully!");
+      const response = await fetch("/api/shorten", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          url: originalUrl,
+        }),
+      });
 
-    setOriginalUrl("");
-  } catch (error) {
-    console.log(error);
+      const result = await response.json();
 
-    toast.error("Failed to shorten URL");
-  } finally {
-    setLoading(false);
-  }
-};
+      console.log(result);
+
+      if (!response.ok) {
+        toast.error(result.error || "Failed to shorten URL");
+        return;
+      }
+
+      setUrls((prev) => [result.data, ...prev]);
+
+      toast.success("URL shortened successfully!");
+
+      setOriginalUrl("");
+    } catch (error) {
+      console.log(error);
+
+      toast.error("Failed to shorten URL");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -76,9 +76,10 @@ export default function DashboardClient({ initialUrls }: DashboardClientProps) {
 
   const deleteUrl = async (id: string) => {
     try {
-      // TODO: Call API to delete URL
-      // await fetch(`/api/urls/${id}`, { method: "DELETE" });
-      
+      await fetch(`/api/url/${id}`, {
+        method: "DELETE",
+      });
+
       setUrls(urls.filter((url) => url.id !== id));
       toast.success("URL deleted successfully!");
     } catch (error) {
