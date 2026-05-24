@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { redirect } from "next/navigation";
+import { redis } from "@/lib/redis";
 
 export default async function Page({
   params,
@@ -8,7 +9,14 @@ export default async function Page({
 }) {
   const { shortCode } = await params;
 
-  console.log("SHORT CODE:", shortCode);
+  const cachedUrl = await redis.get(shortCode);
+
+  
+  if (cachedUrl) {
+    console.log("CACHE HIT");
+
+    redirect(cachedUrl as string);
+  }
 
   const { data, error } = await supabase
     .from("urls")
@@ -26,6 +34,8 @@ export default async function Page({
       </div>
     );
   }
+
+  await redis.set(shortCode, data.original_url);
 
   await supabase
     .from("urls")
