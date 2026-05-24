@@ -63,7 +63,7 @@ export default function SignupPage() {
       // Mock successful signup
       toast.success("Account created successfully!");
       setTimeout(() => router.push("/"), 1000);
-    } catch (error) {
+    } catch (_error) {
       toast.error("Signup failed. Please try again.");
     } finally {
       setLoading(false);

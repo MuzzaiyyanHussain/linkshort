@@ -33,7 +33,7 @@ export async function DELETE(
     return Response.json({
       success: true,
     });
-  } catch (error) {
+  } catch (_error) {
     return Response.json(
       { error: "Server error" },
       { status: 500 }

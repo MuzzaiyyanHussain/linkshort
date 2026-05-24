@@ -82,7 +82,7 @@ export default function DashboardClient({ initialUrls }: DashboardClientProps) {
 
       setUrls(urls.filter((url) => url.id !== id));
       toast.success("URL deleted successfully!");
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to delete URL");
     }
   };

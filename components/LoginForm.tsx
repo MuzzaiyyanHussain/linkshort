@@ -47,7 +47,7 @@ export default function LoginPage() {
       // Mock successful login
       toast.success("Login successful!");
       setTimeout(() => router.push("/"), 1000);
-    } catch (error) {
+    } catch (_error) {
       toast.error("Login failed. Please try again.");
     } finally {
       setLoading(false);
@@ -134,7 +134,7 @@ export default function LoginPage() {
               <div className="w-full border-t border-slate-600"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-slate-800 text-slate-400">Don't have an account?</span>
+              <span className="px-2 bg-slate-800 text-slate-400">Don&apos;t have an account?</span>
             </div>
           </div>
 
