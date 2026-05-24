@@ -1,22 +1,33 @@
 import { supabase } from "@/lib/supabase";
 import { auth } from "@clerk/nextjs/server";
 import { nanoid } from "nanoid";
+import { ratelimit } from "@/lib/rate-limit";
+import { headers } from "next/headers";
 
 export async function POST(req: Request) {
   try {
-    console.log("API HIT");
+    const headersList = await headers();
+
+    const ip = headersList.get("x-forwarded-for") ?? "127.0.0.1";
+
+    const { success } = await ratelimit.limit(ip);
+
+    if (!success) {
+      return Response.json(
+        {
+          error: "Too many requests",
+        },
+        {
+          status: 429,
+        },
+      );
+    }
 
     const { userId } = await auth();
 
-    console.log("USER ID:", userId);
-
     const body = await req.json();
 
-    console.log("BODY:", body);
-
     const shortCode = nanoid(6);
-
-    console.log("SHORT CODE:", shortCode);
 
     const { data, error } = await supabase
       .from("urls")
@@ -27,9 +38,6 @@ export async function POST(req: Request) {
       })
       .select()
       .single();
-
-    console.log("DATA:", data);
-    console.log("ERROR:", error);
 
     if (error) {
       return Response.json({

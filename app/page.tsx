@@ -32,21 +32,41 @@ export default function Home() {
 
     try {
       setLoading(true);
-      // TODO: Replace with actual API call
-      // const response = await fetch("/api/shorten", { method: "POST", body: JSON.stringify({ url: originalUrl }) });
-      // const data = await response.json();
-      
-      const shortCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+      const response = await fetch("/api/shorten", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          url: originalUrl,
+        }),
+      });
+
+      if (response.status === 429) {
+        toast.error("Too many requests. Please try again later.");
+        return;
+      }
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        toast.error(result.error || "Failed to shorten URL");
+        return;
+      }
+
       const newUrl: ShortenedURL = {
-        id: Date.now().toString(),
-        original: originalUrl,
-        shortened: `short.url/${shortCode}`,
-        clicks: 0,
-        createdAt: new Date(),
+        id: result.data.id,
+        original: result.data.original_url,
+        shortened: `${window.location.origin}/${result.data.short_code}`,
+        clicks: result.data.clicks,
+        createdAt: new Date(result.data.created_at),
       };
 
       setShortenedUrls([newUrl, ...shortenedUrls]);
+
       setOriginalUrl("");
+
       toast.success("URL shortened successfully!");
     } catch (error) {
       toast.error("Failed to shorten URL");
@@ -72,7 +92,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <Toaster />
-      
+
       {/* Header */}
       <header className="border-b border-slate-700 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -86,7 +106,7 @@ export default function Home() {
             <Badge variant="secondary" className="text-xs">
               Free & Fast
             </Badge>
-            
+
             <SignedOut>
               <div className="flex gap-2">
                 <SignInButton mode="modal">
