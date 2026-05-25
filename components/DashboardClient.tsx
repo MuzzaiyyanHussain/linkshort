@@ -102,20 +102,20 @@ export default function DashboardClient({ initialUrls }: DashboardClientProps) {
   const avgClicks = urls.length > 0 ? Math.round(totalClicks / urls.length) : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col">
       <Toaster />
 
       {/* Header */}
       <header className="border-b border-slate-700 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-2 rounded-lg">
-              <LinkIcon className="w-5 h-5 text-white" />
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-2 rounded-lg flex-shrink-0">
+              <LinkIcon className="w-4 sm:w-5 h-4 sm:h-5 text-white" />
             </div>
-            <h1 className="text-xl font-bold text-white">LinkShort</h1>
+            <h1 className="text-lg sm:text-xl font-bold text-white truncate">LinkShort</h1>
           </div>
-          <div className="flex items-center gap-3">
-            <Badge variant="secondary" className="text-xs">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Badge variant="secondary" className="text-xs px-2 py-1">
               Dashboard
             </Badge>
             <UserButton afterSignOutUrl="/" />
@@ -123,32 +123,32 @@ export default function DashboardClient({ initialUrls }: DashboardClientProps) {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-12">
+      <main className="flex-1 max-w-6xl mx-auto w-full px-3 sm:px-4 py-8 sm:py-12">
         {/* Welcome Section */}
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-white mb-2">Your Links</h2>
-          <p className="text-slate-400">Create and manage all your shortened URLs</p>
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">Your Links</h2>
+          <p className="text-slate-400 text-sm sm:text-base">Create and manage all your shortened URLs</p>
         </div>
 
         {/* Create URL Section */}
-        <Card className="bg-slate-800 border-slate-700 mb-8 p-6 shadow-2xl">
-          <div className="flex items-center gap-2 mb-4">
-            <Plus className="w-5 h-5 text-blue-400" />
-            <h3 className="text-lg font-semibold text-white">Create New Short Link</h3>
+        <Card className="bg-slate-800 border-slate-700 mb-6 sm:mb-8 p-4 sm:p-6 shadow-2xl">
+          <div className="flex items-center gap-2 mb-3 sm:mb-4">
+            <Plus className="w-4 sm:w-5 h-4 sm:h-5 text-blue-400 flex-shrink-0" />
+            <h3 className="text-base sm:text-lg font-semibold text-white">Create New Short Link</h3>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col gap-2 sm:gap-3">
             <Input
               type="url"
               placeholder="https://example.com/very/long/url"
               value={originalUrl}
               onChange={(e) => setOriginalUrl(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="bg-slate-700 border-slate-600 text-white placeholder-slate-400 flex-1"
+              className="bg-slate-700 border-slate-600 text-white placeholder-slate-400 flex-1 text-sm sm:text-base px-3 sm:px-4 py-2 sm:py-3"
             />
             <Button
               onClick={handleCreateUrl}
               disabled={loading}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 font-semibold"
+              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 sm:px-8 font-semibold w-full sm:w-auto text-sm sm:text-base py-2 sm:py-3"
             >
               {loading ? "Creating..." : "Shorten"}
             </Button>
@@ -158,10 +158,10 @@ export default function DashboardClient({ initialUrls }: DashboardClientProps) {
         {/* URLs Table */}
         {urls.length > 0 ? (
           <Card className="bg-slate-800 border-slate-700 overflow-hidden shadow-2xl">
-            <div className="p-6 border-b border-slate-700">
-              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                <LinkIcon className="w-5 h-5 text-blue-400" />
-                Your Shortened Links ({urls.length})
+            <div className="p-4 sm:p-6 border-b border-slate-700">
+              <h3 className="text-base sm:text-lg font-semibold text-white flex items-center gap-2">
+                <LinkIcon className="w-4 sm:w-5 h-4 sm:h-5 text-blue-400 flex-shrink-0" />
+                <span className="truncate">Your Shortened Links ({urls.length})</span>
               </h3>
             </div>
 
@@ -169,55 +169,56 @@ export default function DashboardClient({ initialUrls }: DashboardClientProps) {
               <Table>
                 <TableHeader>
                   <TableRow className="border-slate-700 hover:bg-transparent">
-                    <TableHead className="text-slate-300">Short Link</TableHead>
-                    <TableHead className="text-slate-300 hidden md:table-cell">Original URL</TableHead>
-                    <TableHead className="text-slate-300 text-center">
+                    <TableHead className="text-slate-300 text-xs sm:text-sm px-2 sm:px-4">Short Link</TableHead>
+                    <TableHead className="text-slate-300 hidden md:table-cell text-xs sm:text-sm px-2 sm:px-4">Original URL</TableHead>
+                    <TableHead className="text-slate-300 text-center text-xs sm:text-sm px-2 sm:px-4">
                       <div className="flex items-center justify-center gap-1">
-                        <BarChart3 className="w-4 h-4" />
-                        Clicks
+                        <BarChart3 className="w-3 sm:w-4 h-3 sm:h-4" />
+                        <span className="hidden sm:inline">Clicks</span>
+                        <span className="sm:hidden">C</span>
                       </div>
                     </TableHead>
-                    <TableHead className="text-slate-300 hidden lg:table-cell">Created</TableHead>
-                    <TableHead className="text-slate-300 text-right">Actions</TableHead>
+                    <TableHead className="text-slate-300 hidden lg:table-cell text-xs sm:text-sm px-2 sm:px-4">Created</TableHead>
+                    <TableHead className="text-slate-300 text-right text-xs sm:text-sm px-2 sm:px-4">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {urls.map((url) => (
                     <TableRow key={url.id} className="border-slate-700 hover:bg-slate-700/50">
-                      <TableCell className="font-mono text-blue-400 font-semibold">
+                      <TableCell className="font-mono text-blue-400 font-semibold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 truncate">
                         linkshort-three.vercel.app/{url.short_code}
                       </TableCell>
-                      <TableCell className="text-slate-300 hidden md:table-cell truncate max-w-xs">
+                      <TableCell className="text-slate-300 hidden md:table-cell truncate max-w-xs text-xs sm:text-sm px-2 sm:px-4">
                         {url.original_url}
                       </TableCell>
-                      <TableCell className="text-center">
-                        <Badge variant="outline" className="bg-slate-700 border-slate-600 text-slate-300">
+                      <TableCell className="text-center px-2 sm:px-4 py-2 sm:py-3">
+                        <Badge variant="outline" className="bg-slate-700 border-slate-600 text-slate-300 text-xs">
                           {url.clicks}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-slate-400 hidden lg:table-cell text-sm">
+                      <TableCell className="text-slate-400 hidden lg:table-cell text-xs sm:text-sm px-2 sm:px-4">
                         {new Date(url.created_at).toLocaleDateString()}
                       </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
+                      <TableCell className="text-right px-2 sm:px-4">
+                        <div className="flex justify-end gap-1 sm:gap-2">
                           <Button
                             size="sm"
                             variant="ghost"
                             onClick={() => copyToClipboard(`linkshort-three.vercel.app/${url.short_code}`)}
-                            className="text-slate-400 hover:text-white hover:bg-slate-600"
+                            className="text-slate-400 hover:text-white hover:bg-slate-600 p-1.5 sm:p-2"
                             title="Copy link"
                           >
-                            <Copy className="w-4 h-4" />
+                            <Copy className="w-3 sm:w-4 h-3 sm:h-4" />
                           </Button>
                           <Button
                             size="sm"
                             variant="ghost"
                             asChild
-                            className="text-slate-400 hover:text-white hover:bg-slate-600"
+                            className="text-slate-400 hover:text-white hover:bg-slate-600 p-1.5 sm:p-2"
                             title="Open link"
                           >
                             <a href={url.original_url} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="w-4 h-4" />
+                              <ExternalLink className="w-3 sm:w-4 h-3 sm:h-4" />
                             </a>
                           </Button>
                           <Button
@@ -225,10 +226,10 @@ export default function DashboardClient({ initialUrls }: DashboardClientProps) {
                             variant="ghost"
                             onClick={() => deleteUrl(url.id)}
                             disabled={deletingIds.has(url.id)}
-                            className="text-red-400 hover:text-red-300 hover:bg-red-950 disabled:opacity-50"
+                            className="text-red-400 hover:text-red-300 hover:bg-red-950 disabled:opacity-50 p-1.5 sm:p-2"
                             title="Delete link"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3 sm:w-4 h-3 sm:h-4" />
                           </Button>
                         </div>
                       </TableCell>
@@ -239,13 +240,13 @@ export default function DashboardClient({ initialUrls }: DashboardClientProps) {
             </div>
           </Card>
         ) : (
-          <Card className="bg-slate-800 border-slate-700 p-12 text-center shadow-2xl">
-            <LinkIcon className="w-12 h-12 text-slate-500 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-2">No URLs yet</h3>
-            <p className="text-slate-400 mb-6">Start by creating your first shortened link above</p>
+          <Card className="bg-slate-800 border-slate-700 p-8 sm:p-12 text-center shadow-2xl">
+            <LinkIcon className="w-10 sm:w-12 h-10 sm:h-12 text-slate-500 mx-auto mb-3 sm:mb-4" />
+            <h3 className="text-lg sm:text-xl font-semibold text-white mb-1 sm:mb-2">No URLs yet</h3>
+            <p className="text-slate-400 mb-4 sm:mb-6 text-sm sm:text-base">Start by creating your first shortened link above</p>
             <Button
               onClick={() => document.querySelector("input")?.focus()}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
+              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white text-sm sm:text-base"
             >
               Create Your First Link
             </Button>
@@ -254,18 +255,18 @@ export default function DashboardClient({ initialUrls }: DashboardClientProps) {
 
         {/* Stats Section - Memoized calculations */}
         {urls.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-            <Card className="bg-slate-800 border-slate-700 p-6">
-              <p className="text-slate-400 text-sm">Total Links</p>
-              <p className="text-3xl font-bold text-white mt-2">{urls.length}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mt-6 sm:mt-8">
+            <Card className="bg-slate-800 border-slate-700 p-4 sm:p-6">
+              <p className="text-slate-400 text-xs sm:text-sm">Total Links</p>
+              <p className="text-2xl sm:text-3xl font-bold text-white mt-1 sm:mt-2">{urls.length}</p>
             </Card>
-            <Card className="bg-slate-800 border-slate-700 p-6">
-              <p className="text-slate-400 text-sm">Total Clicks</p>
-              <p className="text-3xl font-bold text-white mt-2">{totalClicks}</p>
+            <Card className="bg-slate-800 border-slate-700 p-4 sm:p-6">
+              <p className="text-slate-400 text-xs sm:text-sm">Total Clicks</p>
+              <p className="text-2xl sm:text-3xl font-bold text-white mt-1 sm:mt-2">{totalClicks}</p>
             </Card>
-            <Card className="bg-slate-800 border-slate-700 p-6">
-              <p className="text-slate-400 text-sm">Avg Clicks/Link</p>
-              <p className="text-3xl font-bold text-white mt-2">{avgClicks}</p>
+            <Card className="bg-slate-800 border-slate-700 p-4 sm:p-6">
+              <p className="text-slate-400 text-xs sm:text-sm">Avg Clicks/Link</p>
+              <p className="text-2xl sm:text-3xl font-bold text-white mt-1 sm:mt-2">{avgClicks}</p>
             </Card>
           </div>
         )}

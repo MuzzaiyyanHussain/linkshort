@@ -126,3 +126,24 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Responsive utility enhancements */
+@layer utilities {
+  @supports (display: flex) {
+    @media (max-width: 640px) {
+      .responsive-text-sm-lg {
+        @apply text-xs;
+      }
+      .responsive-pad-sm-md {
+        @apply p-2;
+      }
+    }
+  }
+}
+
+/* Smooth transitions for responsive changes */
+@media (prefers-reduced-motion: no-preference) {
+  * {
+    @apply transition-all duration-300 ease-in-out;
+  }
+}
