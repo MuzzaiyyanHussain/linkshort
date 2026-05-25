@@ -185,7 +185,7 @@ export default function DashboardClient({ initialUrls }: DashboardClientProps) {
                   {urls.map((url) => (
                     <TableRow key={url.id} className="border-slate-700 hover:bg-slate-700/50">
                       <TableCell className="font-mono text-blue-400 font-semibold">
-                        short.url/{url.short_code}
+                        linkshort-three.vercel.app/{url.short_code}
                       </TableCell>
                       <TableCell className="text-slate-300 hidden md:table-cell truncate max-w-xs">
                         {url.original_url}
@@ -203,7 +203,7 @@ export default function DashboardClient({ initialUrls }: DashboardClientProps) {
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => copyToClipboard(`short.url/${url.short_code}`)}
+                            onClick={() => copyToClipboard(`linkshort-three.vercel.app/${url.short_code}`)}
                             className="text-slate-400 hover:text-white hover:bg-slate-600"
                             title="Copy link"
                           >
